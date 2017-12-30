@@ -1,0 +1,29 @@
+{
+  "name": "weather-widget",
+  "version": "0.1.0",
+  "description": "See the weather, in a widget!",
+  "main": "index.js",
+  "dependencies": {
+    "menubar": "^5.2.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/5-gwoap/weather-widget.git"
+  },
+  "keywords": [
+    "weather",
+    "widget",
+    "temperature",
+    "openweather"
+  ],
+  "author": "5-gwoap",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/5-gwoap/weather-widget/issues"
+  },
+  "homepage": "https://github.com/5-gwoap/weather-widget#readme"
+}
