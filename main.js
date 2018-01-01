@@ -39,7 +39,7 @@ const getWeather = () => {
   const temp = body.main.temp;
 
   // TODO: create node or element and write to client dom. OR Load another page displaying weather.
-  appIcon.setToolTip(desc + ' - ' + temp);
+  appIcon.setToolTip(desc + ' - ' + temp + ' ' + Date());
   });
 }
 
@@ -48,7 +48,7 @@ const createWindow = () => {
   win = new BrowserWindow({
     width: 800,
     height: 600,
-    // show: false
+    show: false
   });
 
   // Hide window when focus lost.
@@ -89,6 +89,12 @@ app.on('ready', () => {
   appIcon.on('click', () => {
     win.isVisible() ? win.hide() : win.show();
   });
+
+  // TODO reload weather on icon hover. Not sure if implemented yet.
+  appIcon.on('mouse-enter', () => {
+    console.log('hover event');
+    getWeather();
+  })
 });
 
 // Quit when all windows are closed.
