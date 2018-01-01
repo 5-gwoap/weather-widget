@@ -2,9 +2,9 @@
   "name": "weather-widget",
   "version": "0.1.0",
   "description": "See the weather, in a widget!",
-  "main": "index.js",
+  "main": "main.js",
   "dependencies": {
-    "menubar": "^5.2.3"
+    "request": "^2.83.0"
   },
   "devDependencies": {
     "electron-packager": "^10.1.0",
