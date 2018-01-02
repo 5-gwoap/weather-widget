@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Weather</title>
+</head>
+
+<body>
+  <p></p><button>REFRESH</button>
+  <script>
+    require('electron').ipcRenderer.on('weathernow', (event, message) => {
+    // Prints current weather
+    var p = document.querySelector('p');
+    p.textContent=message;
+    console.log("weather is printed as ", message)
+  })
+</script>
+</body>
+
+</html>
