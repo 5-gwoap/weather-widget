@@ -1,8 +1,8 @@
 const request = require('request');
 
-const {app, BrowserWindow, Tray} = require('electron')
-const path = require('path')
-const url = require('url')
+const { app, BrowserWindow, Tray } = require('electron');
+const path = require('path');
+const url = require('url');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -16,7 +16,7 @@ if (!process.env.WEATHER_TOKEN) {
   process.exit(1);
 }
 
-const getWeather = () => {
+const getWeather = (callback) => {
   const options = {
     method: 'GET',
     url: 'http://api.openweathermap.org/data/2.5/weather',
@@ -31,15 +31,17 @@ const getWeather = () => {
   };
 
   request(options, (error, response, body) => {
-  if (error) throw new Error(error);
+    if (error) throw new Error(error);
 
-  body = JSON.parse(body);
+    body = JSON.parse(body);
 
-  const desc = body.weather[0].main;
-  const temp = body.main.temp;
+    const desc = body.weather[0].main;
+    const temp = body.main.temp;
+    const tooltip = desc + ' - ' + temp + ' ' + Date();
 
-  // TODO: create node or element and write to client dom. OR Load another page displaying weather.
-  appIcon.setToolTip(desc + ' - ' + temp + ' ' + Date());
+    // TODO: create node or element and write to client dom. OR Load another page displaying weather.
+    appIcon.setToolTip(tooltip);
+    callback(tooltip)
   });
 }
 
@@ -57,9 +59,6 @@ const createWindow = () => {
     win.hide();
   });
 
-//temp get weather
-  getWeather();
-
   // and load the index.html of the app.
   win.loadURL(url.format({
     pathname: path.join(__dirname, 'index.html'),
@@ -67,8 +66,16 @@ const createWindow = () => {
     slashes: true
   }));
 
+  win.webContents.on('did-finish-load', () => {
+    //temp get weather
+    getWeather((weather) => {
+      console.log(weather);
+      win.webContents.send('weathernow', weather);
+    });
+  })
+
   // Open the DevTools.
-  // win.webContents.openDevTools()
+  win.webContents.openDevTools()
 
   // Emitted when the window is closed.
   win.on('closed', () => {
