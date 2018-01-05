@@ -1,8 +1,7 @@
-const request = require('request');
-
-const { app, BrowserWindow, Tray } = require('electron');
+const { app, BrowserWindow, Tray, ipcMain } = require('electron');
 const path = require('path');
 const url = require('url');
+var getWeather = require("./app/js/weather.js");
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -16,34 +15,9 @@ if (!process.env.WEATHER_TOKEN) {
   process.exit(1);
 }
 
-const getWeather = (callback) => {
-  const options = {
-    method: 'GET',
-    url: 'http://api.openweathermap.org/data/2.5/weather',
-    qs: {
-      id: '5342992',
-      appid: process.env.WEATHER_TOKEN,
-      units: 'imperial'
-    },
-    headers: {
-      'Cache-Control': 'no-cache'
-    }
-  };
-
-  request(options, (error, response, body) => {
-    if (error) throw new Error(error);
-
-    body = JSON.parse(body);
-
-    const desc = body.weather[0].main;
-    const temp = body.main.temp;
-    const tooltip = desc + ' - ' + temp + ' ' + Date();
-
-    // TODO: create node or element and write to client dom. OR Load another page displaying weather.
-    appIcon.setToolTip(tooltip);
-    callback(tooltip)
-  });
-}
+// getWeather((tooltip) => {
+//    appIcon.setToolTip(tooltip);
+// });
 
 const createWindow = () => {
   // Create the browser window.
@@ -69,6 +43,7 @@ const createWindow = () => {
   win.webContents.on('did-finish-load', () => {
     //temp get weather
     getWeather((weather) => {
+      appIcon.setToolTip(weather);
       console.log(weather);
       win.webContents.send('weathernow', weather);
     });
@@ -101,8 +76,18 @@ app.on('ready', () => {
   // TODO reload weather on icon hover. Not sure if implemented yet.
   appIcon.on('mouse-enter', () => {
     console.log('hover event');
-    getWeather();
-  })
+    // getWeather();
+  });
+});
+
+ipcMain.on('getWeather', (event, arg) => {
+  getWeather((weather) => {
+    appIcon.setToolTip(weather);
+    console.log(weather);
+    win.webContents.send('weathernow', weather);
+  });
+  // Reply on async message from renderer process
+  // event.sender.send('async-reply', 2);
 });
 
 // Quit when all windows are closed.
